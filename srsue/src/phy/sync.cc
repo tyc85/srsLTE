@@ -1037,6 +1037,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
     return ERROR;
   } else if (ret == 0) {
     Info("SYNC:  Could not find any cell in this frequency\n");
+    Console("SYNC:  Could not find any cell in this frequency\n");
     return CELL_NOT_FOUND;
   }
   // Save result
@@ -1046,7 +1047,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   float cfo = found_cells[max_peak_cell].cfo;
 
   log_h->console("\n");
-  log_h->console("SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
+  Console("SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
        cell->frame_type ? "TDD" : "FDD",
        cell->id,
        cfo / 1000,

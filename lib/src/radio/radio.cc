@@ -392,6 +392,7 @@ float radio::get_rx_gain()
 void radio::set_tx_srate(double srate)
 {
   log_h->console("====tyc==== [set_tx_srate] setting Tx master clock rate as %.2f MHz\n", srate/1.0e6);
+  //log_h->console("[set_tx_srate] tx_adv_auto is %d, rf_name is %s\n", tx_adv_auto, srslte_rf_name(&rf_device));
   cur_tx_srate = srslte_rf_set_tx_srate(&rf_device, srate);
   burst_preamble_samples = (uint32_t) (cur_tx_srate * burst_preamble_sec);
   if (burst_preamble_samples > burst_preamble_max_samples) {
@@ -401,7 +402,6 @@ void radio::set_tx_srate(double srate)
   
   int nsamples=0;
   /* Set time advance for each known device if in auto mode */
-  log_h->console("[set_tx_srate] tx_adv_auto is %d, rf_name is %s\n", tx_adv_auto, srslte_rf_name(&rf_device));
   if (tx_adv_auto) {
    
     /* This values have been calibrated using the prach_test_usrp tool in srsLTE */
@@ -456,7 +456,7 @@ void radio::set_tx_srate(double srate)
             cur_tx_srate);
         nsamples = cur_tx_srate*(uhd_default_tx_adv_samples * (1/cur_tx_srate) + uhd_default_tx_adv_offset_sec);        
       }
-      log_h->console("====TYC==== cur_tx_srate is %.2f, nsamples is %d", cur_tx_srate, nsamples);
+      log_h->console("====tyc==== cur_tx_srate is %.2f, TX ADV nsamples is %d\n", cur_tx_srate, nsamples);
       
     } else if(!strcmp(srslte_rf_name(&rf_device), "lime")) {
       double srate_khz = round(cur_tx_srate/1e3);
