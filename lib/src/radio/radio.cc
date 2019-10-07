@@ -350,6 +350,7 @@ void radio::set_master_clock_rate(double rate)
 
 void radio::set_rx_srate(double srate)
 {
+  log_h->console("[set_rx_srate] setting master clock rate as %.2f MHz\n", srate/10e6);
   srslte_rf_set_rx_srate(&rf_device, srate);
 }
 
@@ -390,6 +391,7 @@ float radio::get_rx_gain()
 
 void radio::set_tx_srate(double srate)
 {
+  log_h->console("[set_tx_srate] setting master clock rate as %.2f MHz\n", srate/1.0e6);
   cur_tx_srate = srslte_rf_set_tx_srate(&rf_device, srate);
   burst_preamble_samples = (uint32_t) (cur_tx_srate * burst_preamble_sec);
   if (burst_preamble_samples > burst_preamble_max_samples) {
@@ -399,6 +401,7 @@ void radio::set_tx_srate(double srate)
   
   int nsamples=0;
   /* Set time advance for each known device if in auto mode */
+  log_h->console("[set_tx_srate] tx_adv_auto is %d, rf_name is %s\n", tx_adv_auto, srslte_rf_name(&rf_device));
   if (tx_adv_auto) {
    
     /* This values have been calibrated using the prach_test_usrp tool in srsLTE */
@@ -432,12 +435,12 @@ void radio::set_tx_srate(double srate)
         nsamples = cur_tx_srate*(uhd_default_tx_adv_samples * (1/cur_tx_srate) + uhd_default_tx_adv_offset_sec);        
       }
       
-    }else if(!strcmp(srslte_rf_name(&rf_device), "uhd_usrp2")) {
-            double srate_khz = round(cur_tx_srate/1e3);
-            if (srate_khz == 1.92e3) {
-              nsamples = 14; // estimated
-            } else if (srate_khz == 3.84e3) {
-              nsamples = 32;
+    }else if(!strcmp(srslte_rf_name(&rf_device), "uhd_usrp2") | !strcmp(srslte_rf_name(&rf_device), "uhd_unknown")) {
+      double srate_khz = round(cur_tx_srate/1e3);
+      if (srate_khz == 1.92e3) {
+      	nsamples = 14; // estimated
+      } else if (srate_khz == 3.84e3) {
+      	nsamples = 32;
       } else if (srate_khz == 5.76e3) {
         nsamples = 43;
       } else if (srate_khz == 11.52e3) {
@@ -453,6 +456,7 @@ void radio::set_tx_srate(double srate)
             cur_tx_srate);
         nsamples = cur_tx_srate*(uhd_default_tx_adv_samples * (1/cur_tx_srate) + uhd_default_tx_adv_offset_sec);        
       }
+      log_h->console("====TYC==== cur_tx_srate is %.2f, nsamples is %d", cur_tx_srate, nsamples);
       
     } else if(!strcmp(srslte_rf_name(&rf_device), "lime")) {
       double srate_khz = round(cur_tx_srate/1e3);
