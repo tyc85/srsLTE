@@ -350,7 +350,7 @@ void radio::set_master_clock_rate(double rate)
 
 void radio::set_rx_srate(double srate)
 {
-  log_h->console("[set_rx_srate] setting master clock rate as %.2f MHz\n", srate/10e6);
+  log_h->console("====tyc==== [set_rx_srate] setting Rx master clock rate as %.2f MHz\n", srate/10e6);
   srslte_rf_set_rx_srate(&rf_device, srate);
 }
 
@@ -391,7 +391,7 @@ float radio::get_rx_gain()
 
 void radio::set_tx_srate(double srate)
 {
-  log_h->console("[set_tx_srate] setting master clock rate as %.2f MHz\n", srate/1.0e6);
+  log_h->console("====tyc==== [set_tx_srate] setting Tx master clock rate as %.2f MHz\n", srate/1.0e6);
   cur_tx_srate = srslte_rf_set_tx_srate(&rf_device, srate);
   burst_preamble_samples = (uint32_t) (cur_tx_srate * burst_preamble_sec);
   if (burst_preamble_samples > burst_preamble_max_samples) {

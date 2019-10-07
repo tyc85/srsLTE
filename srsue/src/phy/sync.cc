@@ -30,6 +30,7 @@
 #define Warning(fmt, ...) if (SRSLTE_DEBUG_ENABLED) log_h->warning(fmt, ##__VA_ARGS__)
 #define Info(fmt, ...)    if (SRSLTE_DEBUG_ENABLED) log_h->info(fmt, ##__VA_ARGS__)
 #define Debug(fmt, ...)   if (SRSLTE_DEBUG_ENABLED) log_h->debug(fmt, ##__VA_ARGS__)
+#define Console(fmt, ...)   if (SRSLTE_DEBUG_ENABLED) log_h->console(fmt, ##__VA_ARGS__)
 
 namespace srsue {
 
@@ -885,6 +886,7 @@ void sync::set_sampling_rate()
 #endif
 
     srate_mode = SRATE_CAMP;
+    // NOTE: UE sampling rate is set here
     radio_h->set_rx_srate(current_srate);
     radio_h->set_tx_srate(current_srate);
   } else {
@@ -1012,6 +1014,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
     p->radio_h->set_rx_srate(1.92e6);
     p->radio_h->set_tx_srate(1.92e6);
     Info("SYNC:  Setting Cell Search sampling rate\n");
+    Console("SYNC:  Setting Cell Search sampling rate 1.92e6\n");
   }
 
   /* Find a cell in the given N_id_2 or go through the 3 of them to find the strongest */
@@ -1019,6 +1022,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   int ret = SRSLTE_ERROR;
 
   Info("SYNC:  Searching for cell...\n");
+  Console("SYNC:  Searching for cell, force_N_id_2 is %d\n", force_N_id_2);
   log_h->console(".");
 
   if (force_N_id_2 >= 0 && force_N_id_2 < 3) {
@@ -1042,6 +1046,11 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   float cfo = found_cells[max_peak_cell].cfo;
 
   log_h->console("\n");
+  log_h->console("SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
+       cell->frame_type ? "TDD" : "FDD",
+       cell->id,
+       cfo / 1000,
+       srslte_cp_string(cell->cp));
   Info("SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
        cell->frame_type ? "TDD" : "FDD",
        cell->id,
