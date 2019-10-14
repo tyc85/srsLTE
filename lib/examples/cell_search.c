@@ -101,7 +101,7 @@ void parse_args(int argc, char **argv) {
       rf_gain = atof(argv[optind]);
       break;
     case 'v':
-      srslte_verbose++;
+      srslte_verbose+=2;
       break;
     default:
       usage(argv[0]);
@@ -219,7 +219,24 @@ int main(int argc, char **argv) {
     srslte_rf_set_rx_srate(&rf, SRSLTE_CS_SAMP_FREQ);
     INFO("Starting receiver...\n");
     srslte_rf_start_rx_stream(&rf, false);
-    
+    INFO("==== trying rf utils cell search and mib decode path, force_N_id_2 = 1 ==== \n");
+    float search_cell_cfo = 0.0;
+    srslte_cell_t cell;
+    int ret;
+    int ntrial = 0;
+    do {
+      //ret = rf_search_and_decode_mib(
+      //    &rf, prog_args.rf_nof_rx_ant, &cell_detect_config, prog_args.force_N_id_2, &cell, &search_cell_cfo);
+      ret = rf_search_and_decode_mib(
+        &rf, 1, &cell_detect_config, 1, &cell, &search_cell_cfo); 
+      if (ret < 0) {
+        ERROR("Error searching for cell\n");
+        exit(-1);
+      } else if (ret == 0 && !go_exit) {
+        printf("Cell not found after %d trials. Trying again (Press Ctrl+C to exit)\n", ntrial++);
+      }
+    } while (ret == 0 && !go_exit); 
+    INFO("==== trying rf utils cell search and mib decode path, force_N_id_2 = 1 ==== \n");
     n = srslte_ue_cellsearch_scan(&cs, found_cells, NULL); 
     if (n < 0) {
       ERROR("Error searching cell\n");
@@ -230,7 +247,7 @@ int main(int argc, char **argv) {
           srslte_cell_t cell;
           cell.id = found_cells[i].cell_id; 
           cell.cp = found_cells[i].cp; 
-          int ret = rf_mib_decoder(&rf, 1, &cell_detect_config, &cell, NULL);
+          ret = rf_mib_decoder(&rf, 1, &cell_detect_config, &cell, NULL);
           if (ret < 0) {
             ERROR("Error decoding MIB\n");
             exit(-1);
