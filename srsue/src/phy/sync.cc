@@ -968,7 +968,7 @@ void sync::search::init(cf_t* buffer[SRSLTE_MAX_PORTS], srslte::log* log_h, uint
   // Set options defined in expert section
   p->set_ue_sync_opts(&cs.ue_sync, 0);
 
-  force_N_id_2 = -1;
+  //force_N_id_2 = 1;
 }
 
 void sync::search::reset()
@@ -1011,10 +1011,10 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
 
   if (p->srate_mode != SRATE_FIND) {
     p->srate_mode = SRATE_FIND;
+    Console("SYNC:  before setting Cell Search sampling rate 1.92e6\n");
     p->radio_h->set_rx_srate(1.92e6);
     p->radio_h->set_tx_srate(1.92e6);
     Info("SYNC:  Setting Cell Search sampling rate\n");
-    Console("SYNC:  Setting Cell Search sampling rate 1.92e6\n");
   }
 
   /* Find a cell in the given N_id_2 or go through the 3 of them to find the strongest */
@@ -1022,6 +1022,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   int ret = SRSLTE_ERROR;
 
   Info("SYNC:  Searching for cell...\n");
+  //force_N_id_2 = 1;
   Console("SYNC:  Searching for cell, force_N_id_2 is %d\n", force_N_id_2);
   log_h->console(".");
 
@@ -1073,6 +1074,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   ret = srslte_ue_mib_sync_decode(&ue_mib_sync,
                                   40,
                                   bch_payload, &cell->nof_ports, &sfn_offset);
+  Console("SYNC:  srslte_ue_mib_sync_decode ret is %d\n", ret);
   if (ret == 1) {
     srslte_pbch_mib_unpack(bch_payload, cell, NULL);
 
