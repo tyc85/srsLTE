@@ -280,7 +280,7 @@ void parse_args(prog_args_t *args, int argc, char **argv) {
       args->disable_plots_except_constellation = true;
       break;
     case 'v':
-      srslte_verbose++;
+      srslte_verbose+=2;
       args->verbose = srslte_verbose;
       break;
     case 'Z':
