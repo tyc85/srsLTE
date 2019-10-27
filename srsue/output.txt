@@ -1,0 +1,13 @@
+linux; GNU C++ version 7.4.0; Boost_106501; UHD_003.010.003.HEAD-0-gef157678
+
+Reading configuration file /home/devops/.config/srslte/ue.conf...
+
+Built in Release mode using commit 61f3a55b on branch HEAD.
+
+---  Software Radio Systems LTE UE  ---
+
+Opening RF device with 1 RX antennas...
+Opening USRP with args: 
+-- Opening a USRP2/N-Series device...
+-- Current recv frame size: 1472 bytes
+-- Current send frame size: 1472 bytes

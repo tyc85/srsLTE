@@ -956,10 +956,14 @@ void sync::search::init(cf_t* buffer[SRSLTE_MAX_PORTS], srslte::log* log_h, uint
     this->buffer[i] = buffer[i];
   }
 
+  // NOTE: why hard code to 8 and 4 for max_frame_pss and nof_valid_pss_frames
+  // in cell search example they were 10 and 10, testing between the two
+  //if (srslte_ue_cellsearch_init_multi(&cs, 10, radio_recv_callback, nof_rx_antennas, parent)) {
   if (srslte_ue_cellsearch_init_multi(&cs, 8, radio_recv_callback, nof_rx_antennas, parent)) {
     Error("SYNC:  Initiating UE cell search\n");
   }
   srslte_ue_cellsearch_set_nof_valid_frames(&cs, 4);
+  //srslte_ue_cellsearch_set_nof_valid_frames(&cs, 10);
 
   if (srslte_ue_mib_sync_init_multi(&ue_mib_sync, radio_recv_callback, nof_rx_antennas, parent)) {
     Error("SYNC:  Initiating UE MIB synchronization\n");
@@ -1022,9 +1026,9 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   int ret = SRSLTE_ERROR;
 
   Info("SYNC:  Searching for cell...\n");
-  //force_N_id_2 = 1;
-  Console("SYNC:  Searching for cell, force_N_id_2 is %d\n", force_N_id_2);
-  log_h->console(".");
+  force_N_id_2 = 1;
+  Console("= SYNC:  Searching for cell, force_N_id_2 is %d\n", force_N_id_2);
+  //log_h->console(".");
 
   if (force_N_id_2 >= 0 && force_N_id_2 < 3) {
     ret = srslte_ue_cellsearch_scan_N_id_2(&cs, force_N_id_2, &found_cells[force_N_id_2]);
@@ -1038,7 +1042,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
     return ERROR;
   } else if (ret == 0) {
     Info("SYNC:  Could not find any cell in this frequency\n");
-    Console("SYNC:  Could not find any cell in this frequency\n");
+    Console("= SYNC:  Could not find any cell in this frequency\n");
     return CELL_NOT_FOUND;
   }
   // Save result
@@ -1047,13 +1051,12 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   cell->frame_type = found_cells[max_peak_cell].frame_type;
   float cfo = found_cells[max_peak_cell].cfo;
 
-  log_h->console("\n");
-  Console("SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
+  Console("== SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
        cell->frame_type ? "TDD" : "FDD",
        cell->id,
        cfo / 1000,
        srslte_cp_string(cell->cp));
-  Info("SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
+  Info("== SYNC:  PSS/SSS detected: Mode=%s, PCI=%d, CFO=%.1f KHz, CP=%s\n",
        cell->frame_type ? "TDD" : "FDD",
        cell->id,
        cfo / 1000,
@@ -1074,7 +1077,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
   ret = srslte_ue_mib_sync_decode(&ue_mib_sync,
                                   40,
                                   bch_payload, &cell->nof_ports, &sfn_offset);
-  Console("SYNC:  srslte_ue_mib_sync_decode ret is %d\n", ret);
+  Console("=== SYNC:  srslte_ue_mib_sync_decode ret is %d\n", ret);
   if (ret == 1) {
     srslte_pbch_mib_unpack(bch_payload, cell, NULL);
 
@@ -1086,7 +1089,7 @@ sync::search::ret_code sync::search::run(srslte_cell_t* cell)
             cell->nof_ports,
             cfo / 1000);
 
-    Info("SYNC:  MIB Decoded: Mode=%s, PCI=%d, PRB=%d, Ports=%d, CFO=%.1f KHz\n",
+    Info("==== SYNC:  MIB Decoded: Mode=%s, PCI=%d, PRB=%d, Ports=%d, CFO=%.1f KHz\n",
          cell->frame_type ? "TDD" : "FDD",
          cell->id,
          cell->nof_prb,
