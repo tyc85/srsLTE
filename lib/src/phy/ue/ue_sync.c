@@ -594,7 +594,7 @@ static int track_peak_ok(srslte_ue_sync_t* q, uint32_t track_idx)
   /* Adjust current CFO estimation with PSS
    * Since sync track has enabled only PSS-based correlation, get_cfo() returns that value only, already filtered.
    */
-  INFO("TRACK: cfo_current=%f, cfo_strack=%f\n", 15000*q->cfo_current_value, 15000*srslte_sync_get_cfo(&q->strack));
+  DEBUG("TRACK: cfo_current=%f, cfo_strack=%f\n", 15000*q->cfo_current_value, 15000*srslte_sync_get_cfo(&q->strack));
   if (15000*fabsf(srslte_sync_get_cfo(&q->strack)) > q->cfo_pss_min) {
     q->cfo_current_value += srslte_sync_get_cfo(&q->strack)*q->cfo_loop_bw_pss;
     q->pss_stable_cnt = 0;

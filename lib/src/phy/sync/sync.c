@@ -518,7 +518,7 @@ static bool sync_sss_symbol(srslte_sync_t* q, const cf_t* input, uint32_t* sf_id
     }
     *N_id_1 = q->N_id_1;
     *corr   = ratio;
-    INFO("SSS correlation with N_id_1=%d, sf0=%.2f, sf5=%.2f, sf_idx=%d, ratio=%.1f\n",
+    DEBUG("SSS correlation with N_id_1=%d, sf0=%.2f, sf5=%.2f, sf_idx=%d, ratio=%.1f\n",
          q->N_id_1,
          res[0],
          res[1],
@@ -547,7 +547,7 @@ static bool sync_sss_symbol(srslte_sync_t* q, const cf_t* input, uint32_t* sf_id
     ret     = srslte_sss_N_id_1(&q->sss, q->m0, q->m1);
     if (ret >= 0) {
       *N_id_1 = (uint32_t)ret;
-      INFO("SSS detected N_id_1=%d, sf_idx=%d, %s CP\n",
+      DEBUG("SSS detected N_id_1=%d, sf_idx=%d, %s CP\n",
            *N_id_1,
            *sf_idx,
            SRSLTE_CP_ISNORM(q->cp) ? "Normal" : "Extended");
@@ -643,7 +643,7 @@ srslte_sync_find_ret_t srslte_sync_find(srslte_sync_t *q, const cf_t *input, uin
       // Correct it using precomputed signal and store in buffer (don't modify input signal)
       if (q->cfo_i_value != 0) {
         srslte_vec_prod_ccc((cf_t*) input_ptr, q->cfo_i_corr[q->cfo_i_value<0?0:1], q->temp, q->frame_size);
-        INFO("Compensating cfo_i=%d\n", q->cfo_i_value);
+        DEBUG("Compensating cfo_i=%d\n", q->cfo_i_value);
         input_ptr = q->temp;
       }
     }
@@ -662,7 +662,7 @@ srslte_sync_find_ret_t srslte_sync_find(srslte_sync_t *q, const cf_t *input, uin
         q->cfo_cp_mean = SRSLTE_VEC_EMA(cfo_cp, q->cfo_cp_mean, q->cfo_ema_alpha);
       }
 
-      INFO("CP-CFO: estimated=%f, mean=%f\n", cfo_cp, q->cfo_cp_mean);
+      DEBUG("CP-CFO: estimated=%f, mean=%f\n", cfo_cp, q->cfo_cp_mean);
 
       /* Correct CFO with the averaged CFO estimation */
       srslte_cfo_correct(&q->cfo_corr_frame, input_ptr, q->temp, -q->cfo_cp_mean / q->fft_size);
@@ -680,7 +680,7 @@ srslte_sync_find_ret_t srslte_sync_find(srslte_sync_t *q, const cf_t *input, uin
       }
     }
 
-    INFO("PSS: id=%d, peak_pos=%d, peak_value=%f\n", q->N_id_2, peak_pos, q->peak_value);
+    DEBUG("PSS: id=%d, peak_pos=%d, peak_value=%f\n", q->N_id_2, peak_pos, q->peak_value);
 
     // Save peak position
     if (peak_position) {
@@ -713,7 +713,7 @@ srslte_sync_find_ret_t srslte_sync_find(srslte_sync_t *q, const cf_t *input, uin
           q->cfo_pss_mean = SRSLTE_VEC_EMA(q->cfo_pss, q->cfo_pss_mean, q->cfo_ema_alpha);
         }
 
-        INFO("PSS-CFO: filter=%s, estimated=%f, mean=%f\n",
+        DEBUG("PSS-CFO: filter=%s, estimated=%f, mean=%f\n",
              q->pss_filtering_enabled ? "yes" : "no",
              q->cfo_pss,
              q->cfo_pss_mean);
