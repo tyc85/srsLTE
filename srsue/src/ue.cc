@@ -213,6 +213,8 @@ bool ue::init(all_args_t *args_) {
       return false;
     }
 
+    // Set master clock rate ==== TYC
+    radios[r].set_master_clock_rate(30.72e6);
     // Set RF options
     if (args->rf.time_adv_nsamples.compare("auto")) {
       int t = atoi(args->rf.time_adv_nsamples.c_str());
