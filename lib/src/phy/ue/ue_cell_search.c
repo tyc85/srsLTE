@@ -327,7 +327,16 @@ int srslte_ue_cellsearch_scan_N_id_2(srslte_ue_cellsearch_t * q,
                 q->candidates[nof_detected_frames].cell_id,
                 srslte_cp_string(q->candidates[nof_detected_frames].cp),
                 q->candidates[nof_detected_frames].cfo / 1000);
-
+          /*
+          fprintf(stdout, "[DEBUG] CELL SEARCH: [%d/%d/%d]: Found peak PSR=%.3f, Cell_id: %d CP: %s, CFO=%.1f KHz\n",
+                nof_detected_frames,
+                nof_scanned_frames,
+                q->nof_valid_frames,
+                q->candidates[nof_detected_frames].psr,
+                q->candidates[nof_detected_frames].cell_id,
+                srslte_cp_string(q->candidates[nof_detected_frames].cp),
+                q->candidates[nof_detected_frames].cfo / 1000);
+          */
           nof_detected_frames++;           
         }
       } else if (ret == 0) {
@@ -344,6 +353,7 @@ int srslte_ue_cellsearch_scan_N_id_2(srslte_ue_cellsearch_t * q,
     if (nof_detected_frames > 0) {
       ret = 1;      // A cell has been found.  
       if (found_cell) {
+        fprintf(stdout, "[DEBUG] CELL SEARCH: nof_detected_frames=%d\n", nof_detected_frames);
         get_cell(q, nof_detected_frames, found_cell);        
       }
     } else {
