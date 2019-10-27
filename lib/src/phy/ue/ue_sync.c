@@ -719,7 +719,7 @@ int srslte_ue_sync_zerocopy(srslte_ue_sync_t* q, cf_t* input_buffer[SRSLTE_MAX_P
       if (q->sf_idx == 10) {
         q->sf_idx = 0;
       }
-      INFO("Reading %d samples. sf_idx = %d\n", q->sf_len, q->sf_idx);
+      DEBUG("Reading %d samples. sf_idx = %d\n", q->sf_len, q->sf_idx);
       ret = 1;
     } else {
 
@@ -762,10 +762,8 @@ int srslte_ue_sync_zerocopy(srslte_ue_sync_t* q, cf_t* input_buffer[SRSLTE_MAX_P
           if (q->do_agc) {
             srslte_agc_process(&q->agc, input_buffer[0], q->sf_len);
           }
-
-          INFO("SYNC FIND: sf_idx=%d, ret=%d, next_state=%d\n", q->sf_idx, ret, q->state);
-
-        break;
+          DEBUG("SYNC FIND: sf_idx=%d, ret=%d, next_state=%d\n", q->sf_idx, ret, q->state);        
+          break;
         case SF_TRACK:
          
           ret = 1;
