@@ -194,6 +194,7 @@ int srslte_rf_close(srslte_rf_t *rf)
 
 void srslte_rf_set_master_clock_rate(srslte_rf_t *rf, double rate) 
 {
+  fprintf(stdout, "[DEBUG] setting master clock rate as %.2f\n", rate);
   ((rf_dev_t*) rf->dev)->srslte_rf_set_master_clock_rate(rf->handler, rate);  
 }
 
