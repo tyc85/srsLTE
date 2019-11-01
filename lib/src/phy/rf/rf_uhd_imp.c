@@ -420,7 +420,7 @@ int rf_uhd_open_multi(char *args, void **h, uint32_t nof_channels)
         handler->devname = DEVNAME_B200;
       }else if (find_string(devices_str, "type=usrp2")) {
         // If B200 is available, use it
-        args = "type=n210,master_clock_rate=30.72e6";
+        args = "type=usrp2,master_clock_rate=30.72e6";
         handler->current_master_clock = 30720000;
         handler->devname = DEVNAME_N210;
       }else if (find_string(devices_str, "type=x300")) {
