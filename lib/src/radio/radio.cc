@@ -350,7 +350,7 @@ void radio::set_master_clock_rate(double rate)
 
 void radio::set_rx_srate(double srate)
 {
-  log_h->console("====tyc==== [set_rx_srate] setting Rx master clock rate as %.2f MHz\n", srate/10e6);
+  log_h->debug("setting rx_srate as %.2f MHz\n", srate/10e6);
   srslte_rf_set_rx_srate(&rf_device, srate);
 }
 
@@ -391,7 +391,8 @@ float radio::get_rx_gain()
 
 void radio::set_tx_srate(double srate)
 {
-  log_h->console("====tyc==== [set_tx_srate] setting Tx master clock rate as %.2f MHz\n", srate/1.0e6);
+  //log_h->debug("====tyc==== setting tx sampling rate as %.2f MHz\n", srate/1.0e6);
+  log_h->debug("setting tx_srate as %.2f MHz\n", srate/10e6);
   //log_h->console("[set_tx_srate] tx_adv_auto is %d, rf_name is %s\n", tx_adv_auto, srslte_rf_name(&rf_device));
   cur_tx_srate = srslte_rf_set_tx_srate(&rf_device, srate);
   burst_preamble_samples = (uint32_t) (cur_tx_srate * burst_preamble_sec);
@@ -435,7 +436,9 @@ void radio::set_tx_srate(double srate)
         nsamples = cur_tx_srate*(uhd_default_tx_adv_samples * (1/cur_tx_srate) + uhd_default_tx_adv_offset_sec);        
       }
       
-    }else if(!strcmp(srslte_rf_name(&rf_device), "uhd_usrp2") | !strcmp(srslte_rf_name(&rf_device), "uhd_unknown")) {
+    }else if( // consider uhd_unknown as usrp2 for now
+      !strcmp(srslte_rf_name(&rf_device), "uhd_usrp2") 
+      | !strcmp(srslte_rf_name(&rf_device), "uhd_unknown")) {
       double srate_khz = round(cur_tx_srate/1e3);
       if (srate_khz == 1.92e3) {
       	nsamples = 14; // estimated
@@ -456,7 +459,6 @@ void radio::set_tx_srate(double srate)
             cur_tx_srate);
         nsamples = cur_tx_srate*(uhd_default_tx_adv_samples * (1/cur_tx_srate) + uhd_default_tx_adv_offset_sec);        
       }
-      log_h->console("====tyc==== cur_tx_srate is %.2f, TX ADV nsamples is %d\n", cur_tx_srate, nsamples);
       
     } else if(!strcmp(srslte_rf_name(&rf_device), "lime")) {
       double srate_khz = round(cur_tx_srate/1e3);
@@ -521,6 +523,10 @@ void radio::set_tx_srate(double srate)
     tx_adv_sec *= -1;
     tx_adv_negative = true; 
   }
+  log_h->debug(
+    "cur_tx_srate=%.2f, TX ADV nsamples=%d, tx_adv_sec=%f\n", 
+    cur_tx_srate, nsamples, tx_adv_sec
+  );
 }
 
 void radio::register_error_handler(srslte_rf_error_handler_t h)

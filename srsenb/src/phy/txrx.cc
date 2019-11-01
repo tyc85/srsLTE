@@ -81,9 +81,9 @@ void txrx::run_thread()
   srslte_timestamp_t rx_time = {}, tx_time = {};
   uint32_t sf_len = SRSLTE_SF_LEN_PRB(worker_com->cell.nof_prb);
   
-  log_h->console("====TYC====  sf_len is %d, cell.nof_prb is %d\n", sf_len, worker_com->cell.nof_prb);
+  //log_h->console("====TYC====  sf_len is %d, cell.nof_prb is %d\n", sf_len, worker_com->cell.nof_prb);
   float samp_rate = srslte_sampling_freq_hz(worker_com->cell.nof_prb);
-  log_h->console("====TYC==== setting sampling frequency %.2f MHz\n", (float) samp_rate/1000000);
+  //log_h->console("====TYC==== setting sampling frequency %.2f MHz\n", (float) samp_rate/1000000);
 #if 0
   if (30720%((int) samp_rate/1000) == 0) {
     radio_h->set_master_clock_rate(30.72e6);        
