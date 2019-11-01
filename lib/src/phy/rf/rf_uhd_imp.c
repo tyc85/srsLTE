@@ -409,6 +409,8 @@ int rf_uhd_open_multi(char *args, void **h, uint32_t nof_channels)
       remove_substring(args, rx_subdev_str);
     }
 
+    DEBUG("device_str is %s", devices_str);
+    printf("device_str is %s", devices_str);
     /* If device type or name not given in args, choose a B200 */
     if (args[0]=='\0') {
       if (find_string(devices_str, "type=b200") && !strstr(args, "recv_frame_size")) {
@@ -416,7 +418,12 @@ int rf_uhd_open_multi(char *args, void **h, uint32_t nof_channels)
         args = "type=b200,master_clock_rate=30.72e6";
         handler->current_master_clock = 30720000;
         handler->devname = DEVNAME_B200;
-      } else if (find_string(devices_str, "type=x300")) {
+      }else if (find_string(devices_str, "type=usrp2")) {
+        // If B200 is available, use it
+        args = "type=n210,master_clock_rate=30.72e6";
+        handler->current_master_clock = 30720000;
+        handler->devname = DEVNAME_N210;
+      }else if (find_string(devices_str, "type=x300")) {
         // Else if X300 is available, set master clock rate now (can't be changed later)
         args = "type=x300,master_clock_rate=184.32e6";
         handler->current_master_clock = 184320000;
