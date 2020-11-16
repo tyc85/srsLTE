@@ -635,7 +635,6 @@ double rf_soapy_set_rx_srate(void* h, double rate)
 
 #if STOP_STREAM_BEFORE_RATE_CHANGE
   if (rx_stream_active) {
-    printf("starting rx stream\n");
     rf_soapy_start_rx_stream(handler, true);
   }
 #endif // STOP_STREAM_BEFORE_RATE_CHANGE
